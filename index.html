@@ -648,6 +648,7 @@ dl.gloss dd{margin:2px 0 0;max-width:65ch}
     <div class="row"><span class="muted">Jeito de tocar:</span><div class="chips" id="song-mode"></div></div>
     <div class="row" id="song-alt-row"><span class="muted">Altura:</span><div class="chips" id="song-alt"></div></div>
     <p id="song-note"></p>
+    <div class="block" id="song-player">
     <div class="row" id="song-sec-row"><span class="muted">Parte da música:</span><div class="chips" id="song-sec"></div></div>
     <div><b>Acordes</b> <span class="muted">(clique para ver o desenho)</span></div>
     <div class="chips" id="song-chords"></div>
@@ -663,6 +664,13 @@ dl.gloss dd{margin:2px 0 0;max-width:65ch}
       <button type="button" class="btn ghost" id="song-orig">Velocidade da gravação</button>
       <label class="check" for="song-nocapo"><input type="checkbox" id="song-nocapo"> Estou sem capotraste</label>
     </div>
+    </div>
+  </div>
+  <div class="block" id="learn-box" hidden>
+    <div class="kicker">Solo</div>
+    <h3>Para aprender o solo</h3>
+    <p id="learn-text"></p>
+    <div class="links" id="learn-links"></div>
   </div>
   <div class="block" id="solo-box" hidden>
     <div class="kicker">Solo</div>
@@ -1386,6 +1394,8 @@ const CHORDS = {
   Am7: { f: [-1, 0, 2, 0, 1, 0], fi: [0, 0, 2, 0, 1, 0], b: 5 },
   Dm7: { f: [-1, -1, 0, 2, 1, 1], fi: [0, 0, 0, 2, 1, 1], b: 4 },
   Fadd9: { f: [-1, -1, 3, 2, 1, 3], fi: [0, 0, 3, 2, 1, 4], b: 4 },
+  Em7: { f: [0, 2, 2, 0, 3, 3], fi: [0, 1, 2, 0, 3, 4], b: 6 },
+  A7sus4: { f: [-1, 0, 2, 0, 3, 3], fi: [0, 0, 2, 0, 3, 4], b: 5 },
   // power chords for the blues
   A5: { f: [-1, 0, 2, 2, -1, -1], fi: [0, 0, 1, 2, 0, 0], b: 5 },
   D5: { f: [-1, 5, 7, 7, -1, -1], fi: [0, 1, 3, 4, 0, 0], b: 5 },
@@ -1576,7 +1586,59 @@ const SONGS = [
     loop: ['D', 'D', 'G', 'A'], pattern: 'pop',
     note: 'Versão simplificada do ciclo principal. No original, o segundo acorde é um D com baixo em Fá# (D/F#); aqui ele virou D para facilitar.',
     tips: ['O A é feito com três dedos lado a lado na casa 2: aperte bem as pontas dos dedos.', 'Não precisa de capotraste.'],
-    plan: [] }
+    plan: [] },
+  { title: "Knockin' on Heaven's Door", artist: "Guns N' Roses", capo: 0, level: 'Fácil', orig: 'balada lenta', bpm: 65,
+    loop: ['G', 'D', 'Am', 'Am', 'G', 'D', 'C', 'C'], pattern: 'pop',
+    note: "A versão do Guns N' Roses está em Sol (G) e gira em torno de dois ciclos: G, D, Am e G, D, C. Na gravação, a guitarra está afinada meio tom abaixo. Para treinar sozinha, a afinação normal funciona igual.",
+    tips: [
+      'Do G para o D e do D para o Am, os dedos andam pouco. Treine essas trocas no treino de troca da Aula 6.',
+      'No Am e no C, o dedo 1 fica na 2ª corda, casa 1: só os outros dedos mudam.',
+      'Para tocar junto com a gravação, afine as 6 cordas meio tom abaixo (Mi bemol). Os apps afinadores têm essa opção.',
+      'Na guitarra elétrica, use som limpo na base. No solo, distorção leve e o captador do braço.'
+    ],
+    plan: [
+      '<b>Dias 1–3:</b> G ↔ D e D ↔ Am no treino de troca.',
+      '<b>Dias 4–5:</b> o ciclo completo no player, a 60 BPM.',
+      '<b>Semana 2:</b> toque junto com a gravação, com a guitarra afinada meio tom abaixo.',
+      '<b>Semana 3:</b> o solo, pela tablatura do Songsterr ou por um tutorial em vídeo.'
+    ],
+    learn: { text: 'O solo é lento e cheio de bends e vibrato, as técnicas da Aula 5, e é tocado por cima dos mesmos acordes da base. É um dos solos mais recomendados para quem está começando. A tablatura exata não está aqui: aprenda pela tablatura licenciada do Songsterr ou por um tutorial em vídeo.',
+      links: [['Tutoriais do solo (busca no YouTube)', "Knockin on Heaven's Door Guns N Roses solo tutorial"]] } },
+  { title: 'Wish You Were Here', artist: 'Pink Floyd', capo: 0, level: 'Médio', orig: 'balada', bpm: 60,
+    sections: [
+      { name: 'Introdução', loop: ['Em7', 'G', 'Em7', 'G', 'Em7', 'A7sus4', 'Em7', 'A7sus4', 'G'] },
+      { name: 'Verso', loop: ['C', 'D', 'Am', 'G', 'D', 'C', 'Am', 'G'] }
+    ],
+    pattern: 'pop',
+    note: 'Conferida em cifras publicadas: a introdução usa Em7, G e A7sus4, e o verso usa C, D, Am e G. Algumas cifras escrevem C/G e D/F#; aqui ficaram C e D, que são mais fáceis. Na gravação, uma guitarra solo toca frases curtas por cima dos acordes da introdução.',
+    tips: [
+      'No Em7 e no A7sus4, os dedos 3 e 4 ficam parados na casa 3 das cordas 2 e 1. Só o resto da mão muda, por isso a introdução soa tão ligada.',
+      'As trocas do verso (C → D → Am → G) aparecem em muitas músicas pop. Vale muito treinar.',
+      'Comece pela batida. As frases do solo vêm depois.'
+    ],
+    plan: [
+      '<b>Dias 1–3:</b> a introdução (Em7, G, A7sus4) no player.',
+      '<b>Dias 4–5:</b> o verso (C, D, Am, G).',
+      '<b>Semana 2:</b> as duas partes seguidas e depois junto com a gravação.',
+      '<b>Semana 3:</b> as frases de guitarra da introdução, pelo Songsterr ou por um tutorial em vídeo.'
+    ],
+    learn: { text: 'As frases de guitarra da introdução são curtas e têm vários bends, ótimas para treinar as técnicas da Aula 5. A tablatura exata não está aqui: aprenda pela tablatura licenciada do Songsterr ou por um tutorial em vídeo.',
+      links: [['Tutoriais da introdução e do solo (busca no YouTube)', 'Wish You Were Here Pink Floyd intro solo guitar tutorial']] } },
+  { title: 'Come As You Are', artist: 'Nirvana', capo: 0, level: 'Fácil', orig: 'riff, afinação 1 tom abaixo', bpm: 70, modes: false, pattern: 'quatro',
+    note: 'Esta música é construída em cima de um riff: notas tocadas uma de cada vez, e não acordes com batida. Não encontrei uma cifra confiável dos acordes, então aqui ficam só as orientações para aprender.',
+    tips: [
+      'Na gravação de estúdio, a guitarra está afinada 1 tom abaixo (Ré Sol Dó Fá Lá Ré). Para treinar sozinha, a afinação normal funciona: só fica mais agudo que o disco.',
+      'O riff é tocado nota por nota, como um lick. Use palhetada alternada (para baixo e para cima) e o metrônomo.',
+      'O solo repete a melodia da voz, por isso é fácil de lembrar: cante e toque junto.',
+      'Na gravação, a guitarra tem um efeito ondulado (chorus). Sem pedal, use som limpo.'
+    ],
+    plan: [
+      '<b>Dias 1–3:</b> o riff, devagar, com o metrônomo a 60.',
+      '<b>Dias 4–7:</b> o riff junto com a gravação, com a guitarra afinada 1 tom abaixo.',
+      '<b>Semana 2:</b> o solo, que segue a melodia da voz.'
+    ],
+    learn: { text: 'O riff e o solo são ótimos para treinar notas soltas com palhetada alternada. Aprenda pela tablatura licenciada do Songsterr ou por um tutorial em vídeo.',
+      links: [['Tutoriais do riff (busca no YouTube)', 'Come As You Are Nirvana riff guitar tutorial'], ['Tutoriais do solo (busca no YouTube)', 'Come As You Are Nirvana solo guitar tutorial']] } },
 ];
 let songSel = 0;
 const fbSong = new Fretboard($('#fb-song'), { frets: 7 });
@@ -1621,7 +1683,7 @@ function powerChord(pc) {
 let secSel = 0, altOn = false;
 const useAlt = () => altOn && !!song().alt && songMode !== 'electric';
 const baseCapo = () => useAlt() ? song().alt.capo : song().capo;
-const baseLoop = () => { const s = song(); return s.sections ? s.sections[secSel].loop : s.loop; };
+const baseLoop = () => { const s = song(); return s.sections ? s.sections[secSel].loop : (s.loop || []); };
 const songLoop = () => baseLoop().map(k => {
   if (songMode === 'electric') return powerChord((rootPc(k) + song().capo) % 12);
   return useAlt() ? (song().alt.map[k] || k) : k;
@@ -1646,6 +1708,12 @@ function drawSong() {
   $('#song-sec-row').hidden = !s.sections;
   if (s.sections) chips($('#song-sec'), s.sections, secSel, i => { stopSong(); secSel = i; drawSong(); }, x => x.name);
   $('#song-mode').closest('.row').hidden = s.modes === false;
+  $('#song-player').hidden = !loop.length;
+  $('#learn-box').hidden = !s.learn;
+  if (s.learn) {
+    $('#learn-text').textContent = s.learn.text;
+    $('#learn-links').innerHTML = s.learn.links.map(([label, q]) => `<a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q)}">${label}</a>`).join('');
+  }
   $('#solo-box').hidden = !s.solo;
   if (s.solo) {
     const rp = pcOf(6, s.solo.root);
@@ -1657,12 +1725,12 @@ function drawSong() {
   }
   $('#song-title').textContent = s.title;
   $('#song-artist').textContent = s.artist;
-  $('#song-facts').innerHTML = `<span>Capotraste: <b>${elec ? 'não usa (tom original)' : baseCapo() ? 'casa ' + baseCapo() : 'não precisa'}</b></span><span>Nível: <b>${s.level}</b></span><span>Original: <b>${s.orig}</b></span><span>Levada: <b>${PATTERNS[songPattern()].name}</b></span>`;
+  $('#song-facts').innerHTML = `<span>Capotraste: <b>${elec ? 'não usa (tom original)' : baseCapo() ? 'casa ' + baseCapo() : 'não precisa'}</b></span><span>Nível: <b>${s.level}</b></span><span>Original: <b>${s.orig}</b></span>${loop.length ? `<span>Levada: <b>${PATTERNS[songPattern()].name}</b></span>` : ''}`;
   $('#song-note').textContent = useAlt() ? s.alt.note : s.note;
   chips($('#song-chords'), uniq, 0, i => { fbSong.setMarks(chordMarks(uniq[i])); strum(uniq[i], Audio.init().currentTime + 0.05, 'D', songCapo()); });
   $('#song-bars').innerHTML = loop.map(k => `<div class="bar">${k}</div>`).join('');
   renderPattern($('#song-pat'), songPattern());
-  fbSong.setMarks(chordMarks(loop[0]));
+  fbSong.setMarks(loop.length ? chordMarks(loop[0]) : []);
   $('#song-bpm').value = s.bpm; $('#song-bpm-o').textContent = s.bpm;
   const tips = elec ? [...ELEC_TIPS, ...(s.elecTips || [])] : s.tips;
   const plan = elec ? (s.planElec || []) : s.plan;
