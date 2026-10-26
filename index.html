@@ -670,24 +670,6 @@ dl.gloss dd{margin:2px 0 0;max-width:65ch}
       <div id="pick-tab"></div>
     </div>
   </div>
-  <div class="block" id="study-box" hidden>
-    <div class="kicker">Estudo do vídeo</div>
-    <h3>Como a guitarra da gravação é tocada</h3>
-    <p>Segundo o professor do canal <b id="study-channel"></b>, a guitarra desta música é tocada em <b>afinação padrão</b> (Mi Lá Ré Sol Si Mi), <b>sem capotraste</b>, com um <b>riff dedilhado</b> que segue a música toda. Por isso as versões com batida servem para treinar os acordes, mas não soam iguais quando você toca junto com a gravação.</p>
-    <div class="panel">
-      <b>Capítulos do vídeo</b>
-      <div class="links" id="study-chapters"></div>
-    </div>
-    <h3>Como estudar o riff pelo vídeo</h3>
-    <ol>
-      <li>Afine a guitarra com um app afinador e tire o capotraste.</li>
-      <li>Treine antes a <b>Versão 2 no modo "Difícil · dedilhado"</b>: é o mesmo tom e a mesma ideia de tocar uma corda por vez.</li>
-      <li>Assista ao vídeo em velocidade <b>0,5 ou 0,75</b> (⚙️ → Velocidade), um capítulo por vez.</li>
-      <li>Aprenda um pedaço curto, repita 5 vezes sem erro e só então passe para o próximo.</li>
-      <li>Junte os pedaços e toque junto com a gravação, primeiro com ela em 0,75.</li>
-    </ol>
-    <p class="muted">A tablatura exata do riff é trabalho do professor e está disponível no Patreon dele (link na descrição do vídeo). Este site não copia o riff.</p>
-  </div>
   <div class="block" id="lead-box" hidden>
     <div class="kicker">Guitarra 2 · solo e frases</div>
     <h3>A segunda guitarra</h3>
@@ -1522,108 +1504,47 @@ fbSwap.setMarks(chordMarks(PAIRS[0][0]));
 /* ---------- músicas ---------- */
 // Chords only (no lyrics). Simplified versions checked against published chord sheets.
 const SONGS = [
-  { title: 'Rein Me In', artist: 'Sam Fender e Olivia Dean', level: 'Médio', orig: '~125 BPM',
-    versions: [
-      { name: 'Versão 1 · capo na casa 4', capo: 4, bpm: 60, origBpm: 125,
-        loop: ['G', 'Am', 'Dm', 'Fmaj7', 'Em', 'Am', 'Dm', 'Fmaj7'], pattern: 'quatro',
-        note: 'A primeira versão do curso, a mais fácil. Nas cifras publicadas, essa mesma sequência aparece na introdução, nos versos e no refrão. O F original foi trocado por Fmaj7, que não precisa de pestana.',
-        tips: [
-          '<b>Dm e Fmaj7</b> só usam as 4 cordas mais finas: comece a palhetada na 4ª corda nesses dois acordes.',
-          'Do Dm para o Fmaj7, os três dedos descem juntos para as mesmas cordas, só que em outras casas. Treine essa troca sozinha antes de tudo.',
-          'A levada é simples: <b>só batidas para baixo</b>, uma por tempo, sem parar. Quando ficar fácil, faça duas por tempo para ficar mais parecido com a gravação.',
-          'Na guitarra elétrica, use som <b>limpo</b> e o captador do braço para um timbre mais suave.',
-          'A gravação é rápida (~125 BPM). Comece em 60 aqui e só depois toque junto com a música.'
-        ],
-        plan: [
-          '<b>Dias 1–2:</b> treino de troca <b>G ↔ Am</b> (Aula 6), a 60 BPM.',
-          '<b>Dias 3–4:</b> treino de troca <b>Dm ↔ Fmaj7</b>. É a parte mais difícil da música.',
-          '<b>Dia 5:</b> treino de troca <b>Em ↔ Am</b>.',
-          '<b>Dias 6–7:</b> a sequência completa aqui no player, a 60 BPM.',
-          '<b>Semana 2:</b> suba 5 BPM por dia. Perto de 100 BPM, tente tocar junto com a gravação, com o capo na casa 4.',
-          '<b>Semana 3 (guitarra 2):</b> aprenda o desenho da casa 9, depois as duas frases, e por fim improvise por cima da base.'
-        ],
-        hardTips: [
-          'No jeito difícil, o F aparece com <b>pestana</b> (dedo 1 deitado sobre todas as cordas na casa 1). Enquanto não soar limpo, use o Fmaj7 no lugar.',
-          'O polegar muda de corda conforme o acorde: <b>6ª</b> no G, no Em e no F; <b>5ª</b> no Am; <b>4ª</b> no Dm.',
-          'Este dedilhado foi montado em cima dos acordes da música para você treinar. Ele não copia a gravação nem vídeos nota por nota.'
-        ],
-        planHard: [
-          '<b>Antes:</b> domine o jeito fácil (batida) até uns 90 BPM.',
-          '<b>Dias 1–3:</b> o dedilhado só no G, repetindo o mesmo compasso a 50 BPM, até a mão direita andar sozinha.',
-          '<b>Dias 4–5:</b> G → Am → Dm sem parar o dedilhado na troca.',
-          '<b>Semana 2:</b> a pestana do F. Treine montar o F sozinho, apertando corda por corda até todas soarem. Enquanto isso, use Fmaj7.',
-          '<b>Semana 3:</b> a sequência inteira com dedilhado, subindo 5 BPM por dia.'
-        ],
-        elecTips: [
-          'A sequência vira <b>B5 · C#5 · F#5 · A5 · G#5 · C#5 · F#5 · A5</b>: os mesmos acordes, nas notas reais do tom de Mi maior, sem capo.',
-          'Este é um arranjo para guitarra elétrica feito em cima da harmonia da música. Não é a parte exata da guitarra na gravação.'
-        ],
-        planElec: [
-          '<b>Antes:</b> revise a Aula 3. O desenho do power chord é sempre o mesmo, só muda a casa.',
-          '<b>Dias 1–2:</b> B5 ↔ C#5. Os dois ficam na 5ª corda, então a mão só anda 2 casas.',
-          '<b>Dias 3–4:</b> F#5 ↔ A5 e G#5 ↔ C#5.',
-          '<b>Dias 5–7:</b> a sequência inteira, primeiro com 4 batidas por acorde a 60 BPM, depois em colcheias.',
-          '<b>Semana 2:</b> suba 5 BPM por dia até perto de 125 e toque junto com a gravação, sem capotraste.'
-        ] },
-      { name: 'Versão 2 · tom original (Cifra Club)', capo: 0, bpm: 70, origBpm: 125,
-        alt: { capo: 4, map: { B11: 'G7sus4', 'C#m7': 'Am7', 'F#m7': 'Dm7', A9: 'Fadd9' },
-          note: 'Versão mais aguda: com o capotraste na casa 4, os desenhos G7sus4, Am7, Dm7 e Fadd9 soam como B11, C#m7, F#m7 e A9, só que mais agudos e brilhantes. São desenhos fáceis, perto das tarraxas.' },
-        sections: [
-          { name: 'Intro', loop: ['B11', 'C#m7', 'F#m7'] },
-          { name: 'Primeira parte', loop: ['B11', 'F#m7'] },
-          { name: 'Pré-refrão', loop: ['B11', 'C#m7', 'A9', 'C#m7', 'A9'] },
-          { name: 'Refrão', loop: ['B11', 'C#m7', 'F#m7', 'B11', 'C#m7', 'F#m7', 'B11', 'F#m7', 'C#m7', 'F#m7'] },
-          { name: 'Música toda', loop: [
-            'B11', 'C#m7', 'F#m7', 'B11', 'C#m7', 'F#m7',
-            'B11', 'F#m7', 'B11', 'F#m7', 'B11', 'F#m7', 'B11', 'F#m7',
-            'B11', 'C#m7', 'A9', 'C#m7', 'A9',
-            'B11', 'C#m7', 'F#m7', 'B11', 'C#m7', 'F#m7', 'B11', 'F#m7', 'C#m7', 'F#m7',
-            'B11', 'C#m7', 'F#m7', 'B11', 'C#m7', 'F#m7',
-            'B11', 'C#m7', 'F#m7', 'B11', 'C#m7', 'F#m7', 'B11', 'F#m7', 'C#m7', 'F#m7',
-            'B11', 'C#m7', 'F#m7', 'B11', 'C#m7', 'F#m7'] }
-        ],
-        pattern: 'oitavas',
-        note: 'Conferida com a cifra do Cifra Club: tom de Mi (E), sem capotraste, com os acordes B11, C#m7, F#m7 e A9. Os desenhos usados aqui deixam cordas soltas soando, sem pestana, o que dá o som aberto e brilhante da música. Cada quadrado vale um compasso, mas a duração real de cada acorde varia: confira ouvindo a gravação.',
-        tips: [
-          'O segredo do som são as <b>cordas soltas</b>: nos quatro acordes, a 1ª corda (e quase sempre a 2ª) fica solta e soando.',
-          'B11 e C#m7 começam na 5ª corda. Do B11 para o C#m7, o dedo da 5ª corda anda da casa 2 para a casa 4.',
-          'O F#m7 não usa as cordas 5 e 6: comece a palhetada na 4ª corda.',
-          'O A9 só aparece no pré-refrão. Aprenda as outras partes primeiro.',
-          'A música é <b>rápida</b> (~125 BPM) e a batida é em colcheias: duas batidas para baixo por tempo, sem parar. Use o botão "Velocidade da gravação" só quando as trocas estiverem automáticas.',
-          'Achou o som grave demais? Escolha <b>Altura: mais aguda (capo na casa 4)</b>. É a mesma música, com desenhos que soam mais altos e brilhantes.',
-          'Na guitarra elétrica, use som <b>limpo</b>, o captador do braço ou do meio e, se tiver, um pouco de reverb.'
-        ],
-        plan: [
-          '<b>Dias 1–2:</b> treino de troca <b>B11 ↔ C#m7</b> (Aula 6), a 60 BPM.',
-          '<b>Dias 3–4:</b> treino de troca <b>C#m7 ↔ F#m7</b>.',
-          '<b>Dia 5:</b> a parte <b>Intro</b> no player, que se repete em vários momentos da música.',
-          '<b>Dias 6–7:</b> <b>Primeira parte</b> e <b>Pré-refrão</b> (com o A9).',
-          '<b>Semana 2:</b> <b>Refrão</b> e depois <b>Música toda</b>, subindo 5 BPM por dia até conseguir tocar junto com a gravação.'
-        ],
-        hardTips: [
-          'O polegar toca a <b>5ª corda</b> no B11, no C#m7 e no A9, e a <b>4ª corda</b> no F#m7.',
-          'É o mesmo tom e a mesma ideia de tocar uma corda por vez do riff da gravação. Use este modo como preparação para o estudo do vídeo, mais abaixo.'
-        ],
-        planHard: [
-          '<b>Antes:</b> domine o jeito fácil (batida) até uns 90 BPM.',
-          '<b>Dias 1–3:</b> o dedilhado só no B11, repetindo o mesmo compasso a 50 BPM, até a mão direita andar sozinha.',
-          '<b>Dias 4–5:</b> a parte Intro (B11 → C#m7 → F#m7) sem parar o dedilhado na troca.',
-          '<b>Semana 2:</b> Pré-refrão e Refrão, depois Música toda, subindo 5 BPM por dia.'
-        ],
-        elecTips: [
-          'A parte principal vira <b>B5 · C#5 · F#5</b>, e o pré-refrão ganha o <b>A5</b>. São as mesmas notas da cifra, tocadas como power chords.',
-          'Este é um arranjo para guitarra elétrica feito em cima dos acordes da música. Não é a parte exata da guitarra na gravação.'
-        ],
-        planElec: [
-          '<b>Antes:</b> revise a Aula 3. O desenho do power chord é sempre o mesmo, só muda a casa.',
-          '<b>Dias 1–2:</b> B5 ↔ C#5. Os dois ficam na 5ª corda, então a mão só anda 2 casas.',
-          '<b>Dias 3–4:</b> C#5 ↔ F#5 (da 5ª corda, casa 4, para a 6ª corda, casa 2) e A5 com a 5ª corda solta.',
-          '<b>Dias 5–7:</b> as partes Intro e Refrão, primeiro com 4 batidas por acorde a 60 BPM, depois em colcheias.',
-          '<b>Semana 2:</b> Música toda, subindo 5 BPM por dia até perto de 125, tocando junto com a gravação.'
-        ] }
+  { title: 'Rein Me In', artist: 'Sam Fender e Olivia Dean', level: 'Médio', orig: '~125 BPM', capo: 4, bpm: 60, origBpm: 125,
+    loop: ['G', 'Am', 'Dm', 'Fmaj7', 'Em', 'Am', 'Dm', 'Fmaj7'], pattern: 'quatro',
+    note: 'Nas cifras publicadas, essa mesma sequência aparece na introdução, nos versos e no refrão. O F original foi trocado por Fmaj7, que não precisa de pestana.',
+    tips: [
+      '<b>Dm e Fmaj7</b> só usam as 4 cordas mais finas: comece a palhetada na 4ª corda nesses dois acordes.',
+      'Do Dm para o Fmaj7, os três dedos descem juntos para as mesmas cordas, só que em outras casas. Treine essa troca sozinha antes de tudo.',
+      'A levada é simples: <b>só batidas para baixo</b>, uma por tempo, sem parar. Quando ficar fácil, faça duas por tempo para ficar mais parecido com a gravação.',
+      'Na guitarra elétrica, use som <b>limpo</b> e o captador do braço para um timbre mais suave.',
+      'A gravação é rápida (~125 BPM). Comece em 60 aqui e só depois toque junto com a música.'
     ],
-    study: { video: 'https://www.youtube.com/watch?v=7jJAfMAPPeU', channel: 'Progressive Guitar',
-      chapters: [[0, 'O riff da introdução'], [36, 'Os desenhos de acordes que o riff usa'], [92, 'A transição no meio do riff'], [123, 'O fim do riff e como ele se repete'], [184, 'Como o riff se encaixa na música']] },
+    plan: [
+      '<b>Dias 1–2:</b> treino de troca <b>G ↔ Am</b> (Aula 6), a 60 BPM.',
+      '<b>Dias 3–4:</b> treino de troca <b>Dm ↔ Fmaj7</b>. É a parte mais difícil da música.',
+      '<b>Dia 5:</b> treino de troca <b>Em ↔ Am</b>.',
+      '<b>Dias 6–7:</b> a sequência completa aqui no player, a 60 BPM.',
+      '<b>Semana 2:</b> suba 5 BPM por dia. Perto de 100 BPM, tente tocar junto com a gravação, com o capo na casa 4.',
+      '<b>Semana 3 (guitarra 2):</b> aprenda o desenho da casa 9, depois as duas frases, e por fim improvise por cima da base.'
+    ],
+    hardTips: [
+      'No jeito difícil, o F aparece com <b>pestana</b> (dedo 1 deitado sobre todas as cordas na casa 1). Enquanto não soar limpo, use o Fmaj7 no lugar.',
+      'O polegar muda de corda conforme o acorde: <b>6ª</b> no G, no Em e no F; <b>5ª</b> no Am; <b>4ª</b> no Dm.',
+      'Este dedilhado foi montado em cima dos acordes da música para você treinar. Ele não copia a gravação nem vídeos nota por nota.'
+    ],
+    planHard: [
+      '<b>Antes:</b> domine o jeito fácil (batida) até uns 90 BPM.',
+      '<b>Dias 1–3:</b> o dedilhado só no G, repetindo o mesmo compasso a 50 BPM, até a mão direita andar sozinha.',
+      '<b>Dias 4–5:</b> G → Am → Dm sem parar o dedilhado na troca.',
+      '<b>Semana 2:</b> a pestana do F. Treine montar o F sozinho, apertando corda por corda até todas soarem. Enquanto isso, use Fmaj7.',
+      '<b>Semana 3:</b> a sequência inteira com dedilhado, subindo 5 BPM por dia.'
+    ],
+    elecTips: [
+      'A sequência vira <b>B5 · C#5 · F#5 · A5 · G#5 · C#5 · F#5 · A5</b>: os mesmos acordes, nas notas reais do tom de Mi maior, sem capo.',
+      'Este é um arranjo para guitarra elétrica feito em cima da harmonia da música. Não é a parte exata da guitarra na gravação.'
+    ],
+    planElec: [
+      '<b>Antes:</b> revise a Aula 3. O desenho do power chord é sempre o mesmo, só muda a casa.',
+      '<b>Dias 1–2:</b> B5 ↔ C#5. Os dois ficam na 5ª corda, então a mão só anda 2 casas.',
+      '<b>Dias 3–4:</b> F#5 ↔ A5 e G#5 ↔ C#5.',
+      '<b>Dias 5–7:</b> a sequência inteira, primeiro com 4 batidas por acorde a 60 BPM, depois em colcheias.',
+      '<b>Semana 2:</b> suba 5 BPM por dia até perto de 125 e toque junto com a gravação, sem capotraste.'
+    ],
     lead: { root: 9, licks: [
       { name: 'Frase 1: descendo até a tônica', text: 'Desce pelo desenho com um hammer-on e termina no Dó# com vibrato.', bpm: 70, events: [
         { n: [[2, 12]], d: 1 }, { n: [[2, 9]], d: 0.5 }, { n: [[3, 11]], d: 0.5 }, { n: [[3, 9]], d: 1, tech: { t: 'h', to: 11 } }, { n: [[4, 11]], d: 3, tech: { t: '~' } }
@@ -1717,12 +1638,6 @@ function drawSong() {
   const base = SONGS[songSel];
   $('#song-ver-row').hidden = !base.versions;
   if (base.versions) chips($('#song-ver'), base.versions, verSel, i => { stopSong(); verSel = i; secSel = 0; altOn = false; drawSong(); }, v => v.name);
-  $('#study-box').hidden = !s.study;
-  if (s.study) {
-    $('#study-channel').textContent = s.study.channel;
-    const ts = sec => `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
-    $('#study-chapters').innerHTML = s.study.chapters.map(([sec, t]) => `<a target="_blank" rel="noopener" href="${s.study.video}&t=${sec}s">${ts(sec)} · ${t}</a>`).join('');
-  }
   $('#song-sec-row').hidden = !s.sections;
   if (s.sections) chips($('#song-sec'), s.sections, secSel, i => { stopSong(); secSel = i; drawSong(); }, x => x.name);
   $('#song-role').textContent = s.lead ? 'Guitarra 1 · base (acordes)' : '';
