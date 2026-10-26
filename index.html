@@ -645,6 +645,7 @@ dl.gloss dd{margin:2px 0 0;max-width:65ch}
     <div class="kicker" id="song-role"></div>
     <div class="song-head"><h3 id="song-title"></h3><div class="muted" id="song-artist"></div></div>
     <div class="facts" id="song-facts"></div>
+    <div class="row"><span class="muted">Jeito de tocar:</span><div class="chips" id="song-mode"></div></div>
     <p id="song-note"></p>
     <div><b>Acordes</b> <span class="muted">(clique para ver o desenho)</span></div>
     <div class="chips" id="song-chords"></div>
@@ -652,12 +653,17 @@ dl.gloss dd{margin:2px 0 0;max-width:65ch}
     <div class="bars" id="song-bars"></div>
     <div><b>Levada</b></div>
     <div class="pattern" id="song-pat"></div>
+    <p class="muted" id="pick-legend" hidden><b>P</b> = polegar na corda do baixo do acorde · <b>i</b> = indicador na 3ª corda · <b>m</b> = médio na 2ª · <b>a</b> = anelar na 1ª</p>
     <div id="fb-song"></div>
     <div class="row">
       <button type="button" class="btn" id="song-play">▶ Tocar junto</button>
       <label class="muted" for="song-bpm">Velocidade <output id="song-bpm-o">70</output> BPM</label>
       <input type="range" id="song-bpm" min="40" max="140" step="5" value="70">
       <label class="check" for="song-nocapo"><input type="checkbox" id="song-nocapo"> Estou sem capotraste</label>
+    </div>
+    <div class="block" id="pick-tab-box" hidden>
+      <div><b>O dedilhado em tablatura</b> <span class="muted">(um compasso de cada acorde; com capotraste, a casa do capo vira a casa 0)</span></div>
+      <div id="pick-tab"></div>
     </div>
   </div>
   <div class="block" id="lead-box" hidden>
@@ -932,7 +938,7 @@ function applyTech(v, tech, f, t, d) {
 }
 
 // events: [{n:[[string,fret]...], d:beats, pm?:bool, tech?:{t,to}}]
-function playEvents(events, bpm, onStep) {
+function playEvents(events, bpm, onStep, offset = 0) {
   const c = Audio.init(), beat = 60 / bpm;
   let t = c.currentTime + 0.12;
   events.forEach((ev, i) => {
@@ -940,7 +946,7 @@ function playEvents(events, bpm, onStep) {
     [...ev.n].sort((a, b) => b[0] - a[0]).forEach(([s, f], k) => {
       const tt = t0 + k * 0.012;
       if (f === 'x') { Audio.dead(tt); return; }
-      const v = Audio.play(s, f, { when: tt, mute: !!ev.pm });
+      const v = Audio.play(s, f + offset, { when: tt, mute: !!ev.pm });
       Seq.voices.push(v);
       if (ev.tech) {
         const t2 = applyTech(v, ev.tech, f, tt, d);
@@ -953,12 +959,12 @@ function playEvents(events, bpm, onStep) {
   return t;
 }
 
-function runSeq(btn, events, bpm, onStep) {
+function runSeq(btn, events, bpm, onStep, offset = 0) {
   if (btn.classList.contains('is-playing')) { Seq.stop(); return; }
   Seq.stop();
   const label = btn.innerHTML;
   btn.classList.add('is-playing'); btn.innerHTML = '■ Parar';
-  const end = playEvents(events, bpm, onStep);
+  const end = playEvents(events, bpm, onStep, offset);
   Seq.onstop = () => { btn.classList.remove('is-playing'); btn.innerHTML = label; if (onStep) onStep(-1); };
   Seq.at(end + 0.4, () => Seq.stop());
 }
@@ -1034,8 +1040,8 @@ Fretboard.all = [];
 const TAB_NAMES = { 1: 'e', 2: 'B', 3: 'G', 4: 'D', 5: 'A', 6: 'E' };
 let tabCount = 0;
 class Tab {
-  constructor(el, { events, bpm = 80, fb = null }) {
-    this.el = el; this.events = events; this.bpm = bpm; this.fb = fb;
+  constructor(el, { events, bpm = 80, fb = null, offset = null }) {
+    this.el = el; this.events = events; this.bpm = bpm; this.fb = fb; this.offset = offset;
     const id = 'tabbpm-' + (++tabCount);
     el.classList.add('tabbox');
     el.innerHTML = `<div class="tab-bar"><button type="button" class="btn">▶ Tocar</button>
@@ -1043,7 +1049,7 @@ class Tab {
       <pre class="tab" tabindex="0">${this.html()}</pre>`;
     const range = el.querySelector('input'), out = el.querySelector('output');
     range.addEventListener('input', () => { this.bpm = +range.value; out.textContent = range.value; });
-    el.querySelector('button').addEventListener('click', e => runSeq(e.currentTarget, this.events, this.bpm, (i, ev, phase) => this.step(i, ev, phase)));
+    el.querySelector('button').addEventListener('click', e => runSeq(e.currentTarget, this.events, this.bpm, (i, ev, phase) => this.step(i, ev, phase), this.offset ? this.offset() : 0));
   }
   cellText(ev, s, f) {
     if (!ev.tech) return String(f);
@@ -1054,10 +1060,11 @@ class Tab {
     const cols = this.events.map(ev => {
       const cell = {};
       ev.n.forEach(([s, f]) => { cell[s] = this.cellText(ev, s, f); });
-      const w = Math.max(Math.max(...Object.values(cell).map(x => x.length)) + 2, Math.round(ev.d * 4));
-      return { cell, w, pm: !!ev.pm };
+      const w = Math.max(Math.max(...Object.values(cell).map(x => x.length)) + 2, Math.round(ev.d * 4), ev.label ? ev.label.length + 1 : 0);
+      return { cell, w, pm: !!ev.pm, label: ev.label || '' };
     });
     const lines = [];
+    if (cols.some(c => c.label)) lines.push('  ' + cols.map((c, i) => `<span class="tc pm" data-c="${i}">${c.label.padEnd(c.w, ' ')}</span>`).join(''));
     if (cols.some(c => c.pm)) lines.push('  ' + cols.map((c, i) => `<span class="tc pm" data-c="${i}">${(c.pm ? 'PM' : '').padEnd(c.w, ' ')}</span>`).join(''));
     for (let s = 1; s <= 6; s++) {
       lines.push(`${TAB_NAMES[s]}|` + cols.map((c, i) => {
@@ -1366,22 +1373,27 @@ $('#tech-grid').innerHTML = TECH.map((t, i) => `<div class="panel"><h3>${t.name}
 TECH.forEach((t, i) => new Tab($('#tech-tab-' + i), { bpm: 80, events: t.events }));
 
 /* ---------- aula 6: open chords, strumming, chord changes ---------- */
-// shapes listed from the 6th string to the 1st; -1 = don't play, fi = finger
+// shapes listed from the 6th string to the 1st; -1 = don't play, fi = finger, b = bass string for the thumb
 const CHORDS = {
-  G: { f: [3, 2, 0, 0, 0, 3], fi: [2, 1, 0, 0, 0, 3] },
-  C: { f: [-1, 3, 2, 0, 1, 0], fi: [0, 3, 2, 0, 1, 0] },
-  D: { f: [-1, -1, 0, 2, 3, 2], fi: [0, 0, 0, 1, 3, 2] },
-  A: { f: [-1, 0, 2, 2, 2, 0], fi: [0, 0, 1, 2, 3, 0] },
-  Em: { f: [0, 2, 2, 0, 0, 0], fi: [0, 2, 3, 0, 0, 0] },
-  Am: { f: [-1, 0, 2, 2, 1, 0], fi: [0, 0, 2, 3, 1, 0] },
-  Dm: { f: [-1, -1, 0, 2, 3, 1], fi: [0, 0, 0, 2, 3, 1] },
-  Fmaj7: { f: [-1, -1, 3, 2, 1, 0], fi: [0, 0, 3, 2, 1, 0] }
+  G: { f: [3, 2, 0, 0, 0, 3], fi: [2, 1, 0, 0, 0, 3], b: 6 },
+  C: { f: [-1, 3, 2, 0, 1, 0], fi: [0, 3, 2, 0, 1, 0], b: 5 },
+  D: { f: [-1, -1, 0, 2, 3, 2], fi: [0, 0, 0, 1, 3, 2], b: 4 },
+  A: { f: [-1, 0, 2, 2, 2, 0], fi: [0, 0, 1, 2, 3, 0], b: 5 },
+  Em: { f: [0, 2, 2, 0, 0, 0], fi: [0, 2, 3, 0, 0, 0], b: 6 },
+  Am: { f: [-1, 0, 2, 2, 1, 0], fi: [0, 0, 2, 3, 1, 0], b: 5 },
+  Dm: { f: [-1, -1, 0, 2, 3, 1], fi: [0, 0, 0, 2, 3, 1], b: 4 },
+  Fmaj7: { f: [-1, -1, 3, 2, 1, 0], fi: [0, 0, 3, 2, 1, 0], b: 4 },
+  F: { f: [1, 3, 3, 2, 1, 1], fi: [1, 3, 4, 2, 1, 1], b: 6 }
 };
+// strum tokens: D down, d light down, U up · pick tokens: B thumb on the bass string, 3/2/1 = string for i/m/a
 const PATTERNS = {
   quatro: { name: '4 para baixo', steps: ['D', '', 'D', '', 'D', '', 'D', ''], count: ['1', 'e', '2', 'e', '3', 'e', '4', 'e'] },
   pop: { name: 'Pop', steps: ['D', '', 'D', 'U', '', 'U', 'D', 'U'], count: ['1', 'e', '2', 'e', '3', 'e', '4', 'e'] },
-  valsa: { name: 'Em 6 (balada)', steps: ['D', 'd', 'd', 'D', 'd', 'd'], count: ['1', '2', '3', '4', '5', '6'] }
+  valsa: { name: 'Em 6 (balada)', steps: ['D', 'd', 'd', 'D', 'd', 'd'], count: ['1', '2', '3', '4', '5', '6'] },
+  arpejo: { name: 'P-i-m-i-a-i-m-i', steps: ['B', '3', '2', '3', '1', '3', '2', '3'], count: ['1', 'e', '2', 'e', '3', 'e', '4', 'e'] },
+  arpejo6: { name: 'P-i-m-a-m-i (em 6)', steps: ['B', '3', '2', '1', '2', '3'], count: ['1', '2', '3', '4', '5', '6'] }
 };
+const SYM = { D: '↓', d: '↓', U: '↑', B: 'P', 3: 'i', 2: 'm', 1: 'a' };
 function chordMarks(key) {
   const c = CHORDS[key];
   return c.f.map((fr, i) => {
@@ -1404,6 +1416,10 @@ function strum(key, t, dir, capo) {
   else if (dir === 'd') vel = 0.55;
   st.forEach(([s, f], k) => Audio.play(s, f, { when: t + k * 0.012, vel }));
 }
+function pluck(key, tok, t, capo) {
+  const c = CHORDS[key], s = tok === 'B' ? c.b : +tok, fr = c.f[6 - s];
+  if (fr >= 0) Audio.play(s, fr + capo, { when: t, vel: tok === 'B' ? 0.85 : 0.7 });
+}
 function chips(el, keys, selected, onPick, label = k => k) {
   el.innerHTML = keys.map((k, i) => `<button type="button" class="chip" data-i="${i}" aria-pressed="${i === selected}">${label(k)}</button>`).join('');
   el.onclick = e => {
@@ -1415,7 +1431,7 @@ function chips(el, keys, selected, onPick, label = k => k) {
 function renderPattern(el, key) {
   const p = PATTERNS[key];
   el.style.setProperty('--n', p.steps.length);
-  el.innerHTML = p.steps.map(s => `<span class="${s === 'd' ? 'light' : ''}">${s === 'U' ? '↑' : s ? '↓' : '·'}</span>`).join('') +
+  el.innerHTML = p.steps.map(s => `<span class="${s === 'd' ? 'light' : ''}">${SYM[s] || '·'}</span>`).join('') +
     p.count.map(c => `<small>${c}</small>`).join('');
 }
 function lightStep(el, j) { $$('span', el).forEach((x, i) => x.classList.toggle('on', i === j)); }
@@ -1425,7 +1441,7 @@ function makeStrummer(o) {
     const pat = PATTERNS[o.pattern()].steps, spb = pat.length, ch = o.chords();
     const bar = Math.floor(step / spb) % ch.length, j = step % spb, key = ch[bar];
     if (j === 0 && o.onBar) visualAt(t, () => o.onBar(bar, key));
-    if (pat[j]) strum(key, t, pat[j], o.capo());
+    if (pat[j]) { if ('DUd'.includes(pat[j])) strum(key, t, pat[j], o.capo()); else pluck(key, pat[j], t, o.capo()); }
     if (o.click && j % 2 === 0) Audio.hat(t, j === 0 ? 0.14 : 0.07);
     if (o.onStep) visualAt(t, () => o.onStep(j));
   });
@@ -1491,6 +1507,18 @@ const SONGS = [
       '<b>Semana 2:</b> suba 5 BPM por dia. Perto de 100 BPM, tente tocar junto com a gravação, com o capo na casa 4.',
       '<b>Semana 3 (guitarra 2):</b> aprenda o desenho da casa 9, depois as duas frases, e por fim improvise por cima da base.'
     ],
+    hardTips: [
+      'No jeito difícil, o F aparece com <b>pestana</b> (dedo 1 deitado sobre todas as cordas na casa 1). Enquanto não soar limpo, use o Fmaj7 no lugar: com dedilhado ele também fica bonito.',
+      'O polegar muda de corda conforme o acorde: <b>6ª</b> no G, no Em e no F; <b>5ª</b> no Am; <b>4ª</b> no Dm.',
+      'Este dedilhado foi montado em cima dos acordes da música para você treinar. Ele não copia a gravação nem o vídeo nota por nota.'
+    ],
+    planHard: [
+      '<b>Antes:</b> domine o jeito fácil (batida) até uns 90 BPM.',
+      '<b>Dias 1–3:</b> o dedilhado só no G, repetindo o mesmo compasso a 50 BPM, até a mão direita andar sozinha.',
+      '<b>Dias 4–5:</b> G → Am → Dm sem parar o dedilhado na troca.',
+      '<b>Semana 2:</b> a pestana do F. Treine montar o F sozinho, apertando corda por corda até todas soarem. Enquanto isso, use Fmaj7.',
+      '<b>Semana 3:</b> a sequência inteira com dedilhado, subindo 5 BPM por dia.'
+    ],
     lead: { root: 9, licks: [
       { name: 'Frase 1: descendo até a tônica', text: 'Desce pelo desenho com um hammer-on e termina no Dó# com vibrato.', bpm: 70, events: [
         { n: [[2, 12]], d: 1 }, { n: [[2, 9]], d: 0.5 }, { n: [[3, 11]], d: 0.5 }, { n: [[3, 9]], d: 1, tech: { t: 'h', to: 11 } }, { n: [[4, 11]], d: 3, tech: { t: '~' } }
@@ -1528,15 +1556,25 @@ $('#lead-up').addEventListener('click', e => runSeq(e.currentTarget, leadNotes(s
 $('#lead-down').addEventListener('click', e => runSeq(e.currentTarget, leadNotes(song().lead.root).reverse().map(n => ({ n: [n], d: 1 })), 90, flashOn(fbLead)));
 const songBpm = bpmSlider('song-bpm');
 const song = () => SONGS[songSel];
+let songMode = 'easy';
+const HARD_SUB = { Fmaj7: 'F' };
+const HARD_TIPS = [
+  '<b>Dedos da mão direita:</b> P = polegar, i = indicador, m = médio, a = anelar. O polegar toca a corda do baixo do acorde (a mais grave que soa); i, m e a ficam nas cordas 3, 2 e 1.',
+  'Monte o acorde inteiro com a mão esquerda antes de dedilhar, mesmo tocando uma corda por vez. Assim as notas continuam soando juntas.',
+  'Deixe cada dedo da mão direita "morando" na sua corda, quase sem se mexer. Quem anda de corda é só o polegar.',
+  'Comece bem devagar: dedilhado lento e regular soa melhor do que rápido e tropeçando.'
+];
+const songLoop = () => song().loop.map(k => songMode === 'hard' ? (HARD_SUB[k] || k) : k);
+const songPattern = () => songMode === 'hard' ? (PATTERNS[song().pattern].steps.length === 6 ? 'arpejo6' : 'arpejo') : song().pattern;
 function songCapo() { return $('#song-nocapo').checked ? 0 : song().capo; }
 function lightBar(i) { $$('#song-bars .bar').forEach((b, k) => b.classList.toggle('on', k === i)); }
 const stopSong = loopButton($('#song-play'), makeStrummer({
-  chords: () => song().loop, pattern: () => song().pattern, bpm: songBpm, capo: songCapo, click: true,
+  chords: songLoop, pattern: songPattern, bpm: songBpm, capo: songCapo, click: true,
   onBar: (i, k) => { lightBar(i); fbSong.setMarks(chordMarks(k)); },
   onStep: j => lightStep($('#song-pat'), j)
 }), () => { lightBar(-1); lightStep($('#song-pat'), -1); });
 function drawSong() {
-  const s = song(), uniq = [...new Set(s.loop)];
+  const s = song(), hard = songMode === 'hard', loop = songLoop(), uniq = [...new Set(loop)];
   $('#song-role').textContent = s.lead ? 'Guitarra 1 · base (acordes)' : '';
   $('#lead-box').hidden = !s.lead;
   if (s.lead) {
@@ -1548,22 +1586,35 @@ function drawSong() {
   }
   $('#song-title').textContent = s.title;
   $('#song-artist').textContent = s.artist;
-  $('#song-facts').innerHTML = `<span>Capotraste: <b>${s.capo ? 'casa ' + s.capo : 'não precisa'}</b></span><span>Nível: <b>${s.level}</b></span><span>Original: <b>${s.orig}</b></span><span>Levada: <b>${PATTERNS[s.pattern].name}</b></span>`;
+  $('#song-facts').innerHTML = `<span>Capotraste: <b>${s.capo ? 'casa ' + s.capo : 'não precisa'}</b></span><span>Nível: <b>${s.level}</b></span><span>Original: <b>${s.orig}</b></span><span>${hard ? 'Dedilhado' : 'Levada'}: <b>${PATTERNS[songPattern()].name}</b></span>`;
   $('#song-note').textContent = s.note;
   chips($('#song-chords'), uniq, 0, i => { fbSong.setMarks(chordMarks(uniq[i])); strum(uniq[i], Audio.init().currentTime + 0.05, 'D', songCapo()); });
-  $('#song-bars').innerHTML = s.loop.map(k => `<div class="bar">${k}</div>`).join('');
-  renderPattern($('#song-pat'), s.pattern);
-  fbSong.setMarks(chordMarks(s.loop[0]));
-  $('#song-bpm').value = s.bpm; $('#song-bpm-o').textContent = s.bpm;
-  $('#song-tips').innerHTML = s.tips.map(t => `<li>${t}</li>`).join('');
-  $('#song-plan-box').hidden = !s.plan.length;
-  $('#song-plan').innerHTML = s.plan.map(t => `<li>${t}</li>`).join('');
+  $('#song-bars').innerHTML = loop.map(k => `<div class="bar">${k}</div>`).join('');
+  renderPattern($('#song-pat'), songPattern());
+  fbSong.setMarks(chordMarks(loop[0]));
+  const bpm = hard ? Math.max(40, s.bpm - 10) : s.bpm;
+  $('#song-bpm').value = bpm; $('#song-bpm-o').textContent = bpm;
+  $('#pick-legend').hidden = !hard;
+  $('#pick-tab-box').hidden = !hard;
+  if (hard) {
+    const steps = PATTERNS[songPattern()].steps, ev = [];
+    uniq.forEach(k => steps.forEach((tok, j) => {
+      const c = CHORDS[k], st = tok === 'B' ? c.b : +tok, fr = c.f[6 - st];
+      ev.push({ n: fr >= 0 ? [[st, fr]] : [], d: 0.5, label: j === 0 ? k : '' });
+    }));
+    new Tab($('#pick-tab'), { events: ev, bpm, fb: fbSong, offset: songCapo });
+  }
+  const tips = hard ? [...HARD_TIPS, ...(s.hardTips || [])] : s.tips, plan = hard ? (s.planHard || []) : s.plan;
+  $('#song-tips').innerHTML = tips.map(t => `<li>${t}</li>`).join('');
+  $('#song-plan-box').hidden = !plan.length;
+  $('#song-plan').innerHTML = plan.map(t => `<li>${t}</li>`).join('');
   const q = `${s.title} ${s.artist.split(' e ')[0]}`;
   $('#song-links').innerHTML = `<h3>Para acompanhar</h3>
     <a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q + ' guitar tutorial easy')}">Tutoriais em vídeo de "${s.title}" (busca no YouTube)</a>
     <a target="_blank" rel="noopener" href="https://www.google.com/search?q=${encodeURIComponent(q + ' cifra')}">Letra e cifra completa de "${s.title}" (busca no Google)</a>`;
 }
 chips($('#song-chips'), SONGS, 0, i => { stopSong(); songSel = i; drawSong(); }, s => `${s.title} · ${s.artist.split(' e ')[0]}`);
+chips($('#song-mode'), ['easy', 'hard'], 0, i => { stopSong(); Seq.stop(); songMode = i ? 'hard' : 'easy'; drawSong(); }, m => m === 'easy' ? 'Fácil · batida' : 'Difícil · dedilhado');
 drawSong();
 
 /* ---------- metronome ---------- */
