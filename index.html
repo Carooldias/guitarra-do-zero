@@ -646,6 +646,7 @@ dl.gloss dd{margin:2px 0 0;max-width:65ch}
     <div class="song-head"><h3 id="song-title"></h3><div class="muted" id="song-artist"></div></div>
     <div class="facts" id="song-facts"></div>
     <div class="row"><span class="muted">Jeito de tocar:</span><div class="chips" id="song-mode"></div></div>
+    <div class="row" id="song-alt-row"><span class="muted">Altura:</span><div class="chips" id="song-alt"></div></div>
     <p id="song-note"></p>
     <div class="row" id="song-sec-row"><span class="muted">Parte da música:</span><div class="chips" id="song-sec"></div></div>
     <div><b>Acordes</b> <span class="muted">(clique para ver o desenho)</span></div>
@@ -659,7 +660,8 @@ dl.gloss dd{margin:2px 0 0;max-width:65ch}
     <div class="row">
       <button type="button" class="btn" id="song-play">▶ Tocar junto</button>
       <label class="muted" for="song-bpm">Velocidade <output id="song-bpm-o">70</output> BPM</label>
-      <input type="range" id="song-bpm" min="40" max="140" step="5" value="70">
+      <input type="range" id="song-bpm" min="40" max="160" step="5" value="70">
+      <button type="button" class="btn ghost" id="song-orig">Velocidade da gravação</button>
       <label class="check" for="song-nocapo"><input type="checkbox" id="song-nocapo"> Estou sem capotraste</label>
     </div>
     <div class="block" id="pick-tab-box" hidden>
@@ -1389,7 +1391,12 @@ const CHORDS = {
   B11: { f: [-1, 2, 2, 2, 0, 0], fi: [0, 1, 2, 3, 0, 0], b: 5 },
   'C#m7': { f: [-1, 4, 2, 4, 0, 0], fi: [0, 3, 1, 4, 0, 0], b: 5 },
   'F#m7': { f: [-1, -1, 4, 2, 2, 0], fi: [0, 0, 3, 1, 2, 0], b: 4 },
-  A9: { f: [-1, 0, 2, 4, 2, 0], fi: [0, 0, 1, 3, 2, 0], b: 5 }
+  A9: { f: [-1, 0, 2, 4, 2, 0], fi: [0, 0, 1, 3, 2, 0], b: 5 },
+  // shapes used with a capo to play the same chords higher up
+  G7sus4: { f: [3, -1, 0, 0, 1, 1], fi: [3, 0, 0, 0, 1, 1], b: 6 },
+  Am7: { f: [-1, 0, 2, 0, 1, 0], fi: [0, 0, 2, 0, 1, 0], b: 5 },
+  Dm7: { f: [-1, -1, 0, 2, 1, 1], fi: [0, 0, 0, 2, 1, 1], b: 4 },
+  Fadd9: { f: [-1, -1, 3, 2, 1, 3], fi: [0, 0, 3, 2, 1, 4], b: 4 }
 };
 // strum tokens: D down, d light down, U up · pick tokens: B thumb on the bass string, 3/2/1 = string for i/m/a
 const PATTERNS = {
@@ -1496,7 +1503,9 @@ fbSwap.setMarks(chordMarks(PAIRS[0][0]));
 /* ---------- músicas ---------- */
 // Chords only (no lyrics). Simplified versions checked against published chord sheets.
 const SONGS = [
-  { title: 'Rein Me In', artist: 'Sam Fender e Olivia Dean', capo: 0, level: 'Médio', orig: '~125 BPM', bpm: 60,
+  { title: 'Rein Me In', artist: 'Sam Fender e Olivia Dean', capo: 0, level: 'Médio', orig: '~125 BPM', bpm: 70, origBpm: 125,
+    alt: { capo: 4, map: { B11: 'G7sus4', 'C#m7': 'Am7', 'F#m7': 'Dm7', A9: 'Fadd9' },
+      note: 'Versão mais aguda: com o capotraste na casa 4, os desenhos G7sus4, Am7, Dm7 e Fadd9 soam como B11, C#m7, F#m7 e A9, só que mais agudos e brilhantes. São desenhos fáceis, perto das tarraxas.' },
     sections: [
       { name: 'Intro', loop: ['B11', 'C#m7', 'F#m7'] },
       { name: 'Primeira parte', loop: ['B11', 'F#m7'] },
@@ -1511,14 +1520,15 @@ const SONGS = [
         'B11', 'C#m7', 'F#m7', 'B11', 'C#m7', 'F#m7', 'B11', 'F#m7', 'C#m7', 'F#m7',
         'B11', 'C#m7', 'F#m7', 'B11', 'C#m7', 'F#m7'] }
     ],
-    pattern: 'quatro',
+    pattern: 'oitavas',
     note: 'Conferida com a cifra do Cifra Club: tom de Mi (E), sem capotraste, com os acordes B11, C#m7, F#m7 e A9. Os desenhos usados aqui deixam cordas soltas soando, sem pestana, o que dá o som aberto e brilhante da música. Cada quadrado vale um compasso, mas a duração real de cada acorde varia: confira ouvindo a gravação.',
     tips: [
       'O segredo do som são as <b>cordas soltas</b>: nos quatro acordes, a 1ª corda (e quase sempre a 2ª) fica solta e soando.',
       'B11 e C#m7 começam na 5ª corda. Do B11 para o C#m7, o dedo da 5ª corda anda da casa 2 para a casa 4.',
       'O F#m7 não usa as cordas 5 e 6: comece a palhetada na 4ª corda.',
       'O A9 só aparece no pré-refrão. Aprenda as outras partes primeiro.',
-      'Levada: batidas para baixo, uma por tempo, sem parar. Quando ficar fácil, faça duas por tempo para ficar mais perto da gravação.',
+      'A música é <b>rápida</b> (~125 BPM) e a batida é em colcheias: duas batidas para baixo por tempo, sem parar. Treine devagar e use o botão "Velocidade da gravação" só quando as trocas estiverem automáticas.',
+      'Achou o som grave demais? Escolha <b>Altura: mais aguda (capo na casa 4)</b>. É a mesma música, com desenhos que soam mais altos e brilhantes.',
       'Na guitarra elétrica, use som <b>limpo</b>, o captador do braço ou do meio e, se tiver, um pouco de reverb.'
     ],
     plan: [
@@ -1615,11 +1625,17 @@ function powerChord(pc) {
   }
   return name;
 }
-let secSel = 0;
+let secSel = 0, altOn = false;
+const useAlt = () => altOn && !!song().alt && songMode !== 'electric';
+const baseCapo = () => useAlt() ? song().alt.capo : song().capo;
 const baseLoop = () => { const s = song(); return s.sections ? s.sections[secSel].loop : s.loop; };
-const songLoop = () => baseLoop().map(k => songMode === 'hard' ? (HARD_SUB[k] || k) : songMode === 'electric' ? powerChord((rootPc(k) + song().capo) % 12) : k);
+const songLoop = () => baseLoop().map(k => {
+  if (songMode === 'electric') return powerChord((rootPc(k) + song().capo) % 12);
+  const x = useAlt() ? (song().alt.map[k] || k) : k;
+  return songMode === 'hard' ? (HARD_SUB[x] || x) : x;
+});
 const songPattern = () => songMode === 'hard' ? (PATTERNS[song().pattern].steps.length === 6 ? 'arpejo6' : 'arpejo') : songMode === 'electric' ? (PATTERNS[song().pattern].steps.length === 6 ? 'valsa' : 'oitavas') : song().pattern;
-function songCapo() { return songMode === 'electric' || $('#song-nocapo').checked ? 0 : song().capo; }
+function songCapo() { return songMode === 'electric' || $('#song-nocapo').checked ? 0 : baseCapo(); }
 function lightBar(i) { $$('#song-bars .bar').forEach((b, k) => b.classList.toggle('on', k === i)); }
 const stopSong = loopButton($('#song-play'), makeStrummer({
   chords: songLoop, pattern: songPattern, bpm: songBpm, capo: songCapo, click: true,
@@ -1628,7 +1644,10 @@ const stopSong = loopButton($('#song-play'), makeStrummer({
 }), () => { lightBar(-1); lightStep($('#song-pat'), -1); });
 function drawSong() {
   const s = song(), hard = songMode === 'hard', elec = songMode === 'electric', loop = songLoop(), uniq = [...new Set(loop)];
-  $('#song-nocapo').closest('label').hidden = elec || !s.capo;
+  $('#song-nocapo').closest('label').hidden = elec || !baseCapo();
+  $('#song-alt-row').hidden = !s.alt || elec;
+  if (s.alt) chips($('#song-alt'), ['normal', 'alta'], altOn ? 1 : 0, i => { stopSong(); altOn = !!i; drawSong(); }, a => a === 'normal' ? 'Normal (sem capo)' : `Mais aguda (capo na casa ${s.alt.capo})`);
+  $('#song-orig').hidden = !s.origBpm;
   $('#song-sec-row').hidden = !s.sections;
   if (s.sections) chips($('#song-sec'), s.sections, secSel, i => { stopSong(); secSel = i; drawSong(); }, x => x.name);
   $('#song-role').textContent = s.lead ? 'Guitarra 1 · base (acordes)' : '';
@@ -1642,8 +1661,8 @@ function drawSong() {
   }
   $('#song-title').textContent = s.title;
   $('#song-artist').textContent = s.artist;
-  $('#song-facts').innerHTML = `<span>Capotraste: <b>${elec ? 'não usa (tom original)' : s.capo ? 'casa ' + s.capo : 'não precisa'}</b></span><span>Nível: <b>${s.level}</b></span><span>Original: <b>${s.orig}</b></span><span>${hard ? 'Dedilhado' : 'Levada'}: <b>${PATTERNS[songPattern()].name}</b></span>`;
-  $('#song-note').textContent = s.note;
+  $('#song-facts').innerHTML = `<span>Capotraste: <b>${elec ? 'não usa (tom original)' : baseCapo() ? 'casa ' + baseCapo() : 'não precisa'}</b></span><span>Nível: <b>${s.level}</b></span><span>Original: <b>${s.orig}</b></span><span>${hard ? 'Dedilhado' : 'Levada'}: <b>${PATTERNS[songPattern()].name}</b></span>`;
+  $('#song-note').textContent = useAlt() ? s.alt.note : s.note;
   chips($('#song-chords'), uniq, 0, i => { fbSong.setMarks(chordMarks(uniq[i])); strum(uniq[i], Audio.init().currentTime + 0.05, 'D', songCapo()); });
   $('#song-bars').innerHTML = loop.map(k => `<div class="bar">${k}</div>`).join('');
   renderPattern($('#song-pat'), songPattern());
@@ -1670,7 +1689,8 @@ function drawSong() {
     <a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q + ' guitar tutorial easy')}">Tutoriais em vídeo de "${s.title}" (busca no YouTube)</a>
     <a target="_blank" rel="noopener" href="https://www.google.com/search?q=${encodeURIComponent(q + ' cifra')}">Letra e cifra completa de "${s.title}" (busca no Google)</a>`;
 }
-chips($('#song-chips'), SONGS, 0, i => { stopSong(); songSel = i; secSel = 0; drawSong(); }, s => `${s.title} · ${s.artist.split(' e ')[0]}`);
+$('#song-orig').addEventListener('click', () => { const v = song().origBpm; $('#song-bpm').value = v; $('#song-bpm-o').textContent = v; });
+chips($('#song-chips'), SONGS, 0, i => { stopSong(); songSel = i; secSel = 0; altOn = false; drawSong(); }, s => `${s.title} · ${s.artist.split(' e ')[0]}`);
 const MODES = { easy: 'Fácil · batida', hard: 'Difícil · dedilhado', electric: 'Elétrica · power chords' };
 chips($('#song-mode'), Object.keys(MODES), 0, i => { stopSong(); Seq.stop(); songMode = Object.keys(MODES)[i]; drawSong(); }, m => MODES[m]);
 drawSong();
