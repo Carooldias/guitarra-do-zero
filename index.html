@@ -1390,6 +1390,7 @@ const PATTERNS = {
   quatro: { name: '4 para baixo', steps: ['D', '', 'D', '', 'D', '', 'D', ''], count: ['1', 'e', '2', 'e', '3', 'e', '4', 'e'] },
   pop: { name: 'Pop', steps: ['D', '', 'D', 'U', '', 'U', 'D', 'U'], count: ['1', 'e', '2', 'e', '3', 'e', '4', 'e'] },
   valsa: { name: 'Em 6 (balada)', steps: ['D', 'd', 'd', 'D', 'd', 'd'], count: ['1', '2', '3', '4', '5', '6'] },
+  oitavas: { name: 'Colcheias para baixo', steps: ['D', 'd', 'D', 'd', 'D', 'd', 'D', 'd'], count: ['1', 'e', '2', 'e', '3', 'e', '4', 'e'] },
   arpejo: { name: 'P-i-m-i-a-i-m-i', steps: ['B', '3', '2', '3', '1', '3', '2', '3'], count: ['1', 'e', '2', 'e', '3', 'e', '4', 'e'] },
   arpejo6: { name: 'P-i-m-a-m-i (em 6)', steps: ['B', '3', '2', '1', '2', '3'], count: ['1', '2', '3', '4', '5', '6'] }
 };
@@ -1512,6 +1513,17 @@ const SONGS = [
       'O polegar muda de corda conforme o acorde: <b>6ª</b> no G, no Em e no F; <b>5ª</b> no Am; <b>4ª</b> no Dm.',
       'Este dedilhado foi montado em cima dos acordes da música para você treinar. Ele não copia a gravação nem o vídeo nota por nota.'
     ],
+    elecTips: [
+      'A sequência vira <b>B5 · C#5 · F#5 · A5 · G#5 · C#5 · F#5 · A5</b>. São os mesmos acordes do jeito fácil, só que nas notas reais do tom de Mi maior.',
+      'Este é um arranjo para guitarra elétrica feito em cima da harmonia da música. Não é a parte exata da guitarra na gravação.'
+    ],
+    planElec: [
+      '<b>Antes:</b> revise a Aula 3. O desenho do power chord é sempre o mesmo, só muda a casa.',
+      '<b>Dias 1–2:</b> B5 ↔ C#5. Os dois ficam na 5ª corda, então a mão só anda 2 casas.',
+      '<b>Dias 3–4:</b> F#5 ↔ A5 e G#5 ↔ C#5.',
+      '<b>Dias 5–7:</b> a sequência inteira, primeiro com 4 batidas por acorde, a 60 BPM. Depois passe para as colcheias.',
+      '<b>Semana 2:</b> suba 5 BPM por dia até perto de 125 e toque junto com a gravação, sem capotraste.'
+    ],
     planHard: [
       '<b>Antes:</b> domine o jeito fácil (batida) até uns 90 BPM.',
       '<b>Dias 1–3:</b> o dedilhado só no G, repetindo o mesmo compasso a 50 BPM, até a mão direita andar sozinha.',
@@ -1549,7 +1561,7 @@ const SONGS = [
     plan: [] }
 ];
 let songSel = 0;
-const fbSong = new Fretboard($('#fb-song'), { frets: 5 });
+const fbSong = new Fretboard($('#fb-song'), { frets: 7 });
 const fbLead = new Fretboard($('#fb-lead'), { frets: 15 });
 const leadNotes = r => PENT.flatMap(([s, offs]) => offs.map(o => [s, r + o]));
 $('#lead-up').addEventListener('click', e => runSeq(e.currentTarget, leadNotes(song().lead.root).map(n => ({ n: [n], d: 1 })), 90, flashOn(fbLead)));
@@ -1564,9 +1576,29 @@ const HARD_TIPS = [
   'Deixe cada dedo da mão direita "morando" na sua corda, quase sem se mexer. Quem anda de corda é só o polegar.',
   'Comece bem devagar: dedilhado lento e regular soa melhor do que rápido e tropeçando.'
 ];
-const songLoop = () => song().loop.map(k => songMode === 'hard' ? (HARD_SUB[k] || k) : k);
-const songPattern = () => songMode === 'hard' ? (PATTERNS[song().pattern].steps.length === 6 ? 'arpejo6' : 'arpejo') : song().pattern;
-function songCapo() { return $('#song-nocapo').checked ? 0 : song().capo; }
+const ELEC_TIPS = [
+  'Na guitarra elétrica não precisa de capotraste: você toca as <b>notas reais</b> da música com power chords, igual à Aula 3.',
+  'Por isso os nomes mudam: com capo, o desenho de G soa como B; sem capo, você toca o B direto (B5).',
+  'Som: <b>limpo</b> ou com <b>pouca distorção</b> (crunch). Use o captador da ponte ou o do meio. Distorção demais deixa a música pesada.',
+  'A levada é em colcheias, duas batidas para baixo por tempo, firme e constante. Experimente palm mute nos versos e deixe soar aberto no refrão.',
+  'Abafe as cordas que não fazem parte do power chord, para elas não fazerem barulho.'
+];
+// root note of a chord name like "C#m" or "Fmaj7"
+const rootPc = name => { const m = name.match(/^([A-G])(#|b)?/); return (LET.indexOf(m[1]) + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0) + 12) % 12; };
+// power chord in the lowest position: root on the 6th or 5th string, whichever is closer to the nut
+function powerChord(pc) {
+  const name = LET[pc] + '5';
+  if (!CHORDS[name]) {
+    const f6 = (pc - 4 + 12) % 12, f5 = (pc - 9 + 12) % 12, s = f5 < f6 ? 5 : 6, fr = Math.min(f5, f6);
+    const f = [-1, -1, -1, -1, -1, -1], fi = [0, 0, 0, 0, 0, 0];
+    [[s, fr, fr ? 1 : 0], [s - 1, fr + 2, fr ? 3 : 1], [s - 2, fr + 2, fr ? 4 : 2]].forEach(([st, x, g]) => { f[6 - st] = x; fi[6 - st] = g; });
+    CHORDS[name] = { f, fi, b: s };
+  }
+  return name;
+}
+const songLoop = () => song().loop.map(k => songMode === 'hard' ? (HARD_SUB[k] || k) : songMode === 'electric' ? powerChord((rootPc(k) + song().capo) % 12) : k);
+const songPattern = () => songMode === 'hard' ? (PATTERNS[song().pattern].steps.length === 6 ? 'arpejo6' : 'arpejo') : songMode === 'electric' ? (PATTERNS[song().pattern].steps.length === 6 ? 'valsa' : 'oitavas') : song().pattern;
+function songCapo() { return songMode === 'electric' || $('#song-nocapo').checked ? 0 : song().capo; }
 function lightBar(i) { $$('#song-bars .bar').forEach((b, k) => b.classList.toggle('on', k === i)); }
 const stopSong = loopButton($('#song-play'), makeStrummer({
   chords: songLoop, pattern: songPattern, bpm: songBpm, capo: songCapo, click: true,
@@ -1574,7 +1606,8 @@ const stopSong = loopButton($('#song-play'), makeStrummer({
   onStep: j => lightStep($('#song-pat'), j)
 }), () => { lightBar(-1); lightStep($('#song-pat'), -1); });
 function drawSong() {
-  const s = song(), hard = songMode === 'hard', loop = songLoop(), uniq = [...new Set(loop)];
+  const s = song(), hard = songMode === 'hard', elec = songMode === 'electric', loop = songLoop(), uniq = [...new Set(loop)];
+  $('#song-nocapo').closest('label').hidden = elec || !s.capo;
   $('#song-role').textContent = s.lead ? 'Guitarra 1 · base (acordes)' : '';
   $('#lead-box').hidden = !s.lead;
   if (s.lead) {
@@ -1586,7 +1619,7 @@ function drawSong() {
   }
   $('#song-title').textContent = s.title;
   $('#song-artist').textContent = s.artist;
-  $('#song-facts').innerHTML = `<span>Capotraste: <b>${s.capo ? 'casa ' + s.capo : 'não precisa'}</b></span><span>Nível: <b>${s.level}</b></span><span>Original: <b>${s.orig}</b></span><span>${hard ? 'Dedilhado' : 'Levada'}: <b>${PATTERNS[songPattern()].name}</b></span>`;
+  $('#song-facts').innerHTML = `<span>Capotraste: <b>${elec ? 'não usa (tom original)' : s.capo ? 'casa ' + s.capo : 'não precisa'}</b></span><span>Nível: <b>${s.level}</b></span><span>Original: <b>${s.orig}</b></span><span>${hard ? 'Dedilhado' : 'Levada'}: <b>${PATTERNS[songPattern()].name}</b></span>`;
   $('#song-note').textContent = s.note;
   chips($('#song-chords'), uniq, 0, i => { fbSong.setMarks(chordMarks(uniq[i])); strum(uniq[i], Audio.init().currentTime + 0.05, 'D', songCapo()); });
   $('#song-bars').innerHTML = loop.map(k => `<div class="bar">${k}</div>`).join('');
@@ -1604,7 +1637,8 @@ function drawSong() {
     }));
     new Tab($('#pick-tab'), { events: ev, bpm, fb: fbSong, offset: songCapo });
   }
-  const tips = hard ? [...HARD_TIPS, ...(s.hardTips || [])] : s.tips, plan = hard ? (s.planHard || []) : s.plan;
+  const tips = hard ? [...HARD_TIPS, ...(s.hardTips || [])] : elec ? [...ELEC_TIPS, ...(s.elecTips || [])] : s.tips;
+  const plan = hard ? (s.planHard || []) : elec ? (s.planElec || []) : s.plan;
   $('#song-tips').innerHTML = tips.map(t => `<li>${t}</li>`).join('');
   $('#song-plan-box').hidden = !plan.length;
   $('#song-plan').innerHTML = plan.map(t => `<li>${t}</li>`).join('');
@@ -1614,7 +1648,8 @@ function drawSong() {
     <a target="_blank" rel="noopener" href="https://www.google.com/search?q=${encodeURIComponent(q + ' cifra')}">Letra e cifra completa de "${s.title}" (busca no Google)</a>`;
 }
 chips($('#song-chips'), SONGS, 0, i => { stopSong(); songSel = i; drawSong(); }, s => `${s.title} · ${s.artist.split(' e ')[0]}`);
-chips($('#song-mode'), ['easy', 'hard'], 0, i => { stopSong(); Seq.stop(); songMode = i ? 'hard' : 'easy'; drawSong(); }, m => m === 'easy' ? 'Fácil · batida' : 'Difícil · dedilhado');
+const MODES = { easy: 'Fácil · batida', hard: 'Difícil · dedilhado', electric: 'Elétrica · power chords' };
+chips($('#song-mode'), Object.keys(MODES), 0, i => { stopSong(); Seq.stop(); songMode = Object.keys(MODES)[i]; drawSong(); }, m => MODES[m]);
 drawSong();
 
 /* ---------- metronome ---------- */
