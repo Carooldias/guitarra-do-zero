@@ -642,7 +642,6 @@ dl.gloss dd{margin:2px 0 0;max-width:65ch}
     <div class="chips" id="song-chips"></div>
   </div>
   <div class="panel">
-    <div class="kicker" id="song-role"></div>
     <div class="song-head"><h3 id="song-title"></h3><div class="muted" id="song-artist"></div></div>
     <div class="facts" id="song-facts"></div>
     <div class="row" id="song-ver-row"><span class="muted">Versão:</span><div class="chips" id="song-ver"></div></div>
@@ -663,26 +662,6 @@ dl.gloss dd{margin:2px 0 0;max-width:65ch}
       <input type="range" id="song-bpm" min="40" max="160" step="5" value="70">
       <button type="button" class="btn ghost" id="song-orig">Velocidade da gravação</button>
       <label class="check" for="song-nocapo"><input type="checkbox" id="song-nocapo"> Estou sem capotraste</label>
-    </div>
-  </div>
-  <div class="block" id="lead-box" hidden>
-    <div class="kicker">Guitarra 2 · solo e frases</div>
-    <h3>A segunda guitarra</h3>
-    <p>Na gravação, uma guitarra faz a <b>base</b> com os acordes (é o player acima) e outra toca <b>frases melódicas e o solo</b> por cima. Para tocar essa segunda parte, você usa uma escala em vez de acordes.</p>
-    <p>A música está em <b>Mi maior</b>. A escala que combina com ela é a <b>pentatônica de Dó# menor</b>, que é <b>o mesmo desenho da Aula 4</b>, só que começando na <b>casa 9</b>, sem capotraste.</p>
-    <div class="panel">
-      <div id="fb-lead"></div>
-      <div class="readout" id="lead-readout"></div>
-      <div class="row">
-        <button type="button" class="btn" id="lead-up">▶ Subir a escala</button>
-        <button type="button" class="btn ghost" id="lead-down">▶ Descer a escala</button>
-      </div>
-    </div>
-    <div class="rule"><span class="tag">Tocar junto</span><p>Clique em <b>Tocar junto</b> no player de acordes acima e, enquanto a base toca, clique nas notas do braço ou toque na sua guitarra. Qualquer nota do desenho combina. Termine as frases na nota azul (Dó#) para soar "resolvido".</p></div>
-    <p>As duas frases abaixo foram <b>criadas para treinar</b> esse desenho em cima da música. Não são o solo original. Elas também tocam junto com a base se você ligar o player acima antes.</p>
-    <div id="lead-licks" class="block"></div>
-    <div class="links">
-      <a target="_blank" rel="noopener" data-yt="Rein Me In Sam Fender guitar solo lead tutorial">Solo original de "Rein Me In": tutoriais em vídeo (busca no YouTube)</a>
     </div>
   </div>
   <div class="block">
@@ -1509,7 +1488,6 @@ const SONGS = [
       '<b>Dia 5:</b> treino de troca <b>Em ↔ Am</b>.',
       '<b>Dias 6–7:</b> a sequência completa aqui no player, a 60 BPM.',
       '<b>Semana 2:</b> suba 5 BPM por dia. Perto de 100 BPM, tente tocar junto com a gravação, com o capo na casa 4.',
-      '<b>Semana 3 (guitarra 2):</b> aprenda o desenho da casa 9, depois as duas frases, e por fim improvise por cima da base.'
     ],
     elecTips: [
       'A sequência vira <b>B5 · C#5 · F#5 · A5 · G#5 · C#5 · F#5 · A5</b>: os mesmos acordes, nas notas reais do tom de Mi maior, sem capo.',
@@ -1522,14 +1500,7 @@ const SONGS = [
       '<b>Dias 5–7:</b> a sequência inteira, primeiro com 4 batidas por acorde a 60 BPM, depois em colcheias.',
       '<b>Semana 2:</b> suba 5 BPM por dia até perto de 125 e toque junto com a gravação, sem capotraste.'
     ],
-    lead: { root: 9, licks: [
-      { name: 'Frase 1: descendo até a tônica', text: 'Desce pelo desenho com um hammer-on e termina no Dó# com vibrato.', bpm: 70, events: [
-        { n: [[2, 12]], d: 1 }, { n: [[2, 9]], d: 0.5 }, { n: [[3, 11]], d: 0.5 }, { n: [[3, 9]], d: 1, tech: { t: 'h', to: 11 } }, { n: [[4, 11]], d: 3, tech: { t: '~' } }
-      ] },
-      { name: 'Frase 2: com bend', text: 'Um bend de um tom na 3ª corda, subindo até o Dó# da 1ª corda.', bpm: 70, events: [
-        { n: [[3, 11]], d: 1.5, tech: { t: 'b', to: 13 } }, { n: [[2, 9]], d: 0.5 }, { n: [[2, 12]], d: 1 }, { n: [[1, 9]], d: 3, tech: { t: '~' } }
-      ] }
-    ] } },
+  },
   { title: 'Perfect', artist: 'Ed Sheeran', capo: 1, level: 'Fácil', orig: 'balada em 6', bpm: 70,
     loop: ['G', 'Em', 'C', 'D'], pattern: 'valsa',
     note: 'Ótima primeira música: a mesma sequência de 4 acordes se repete em quase toda a música. Ela é contada em 6 (1-2-3, 4-5-6), como uma valsa lenta.',
@@ -1553,10 +1524,6 @@ const SONGS = [
 ];
 let songSel = 0;
 const fbSong = new Fretboard($('#fb-song'), { frets: 7 });
-const fbLead = new Fretboard($('#fb-lead'), { frets: 15 });
-const leadNotes = r => PENT.flatMap(([s, offs]) => offs.map(o => [s, r + o]));
-$('#lead-up').addEventListener('click', e => runSeq(e.currentTarget, leadNotes(song().lead.root).map(n => ({ n: [n], d: 1 })), 90, flashOn(fbLead)));
-$('#lead-down').addEventListener('click', e => runSeq(e.currentTarget, leadNotes(song().lead.root).reverse().map(n => ({ n: [n], d: 1 })), 90, flashOn(fbLead)));
 const songBpm = bpmSlider('song-bpm');
 let verSel = 0;
 // a song with versions is read as the shared fields plus the chosen version
@@ -1609,15 +1576,6 @@ function drawSong() {
   if (base.versions) chips($('#song-ver'), base.versions, verSel, i => { stopSong(); verSel = i; secSel = 0; altOn = false; drawSong(); }, v => v.name);
   $('#song-sec-row').hidden = !s.sections;
   if (s.sections) chips($('#song-sec'), s.sections, secSel, i => { stopSong(); secSel = i; drawSong(); }, x => x.name);
-  $('#song-role').textContent = s.lead ? 'Guitarra 1 · base (acordes)' : '';
-  $('#lead-box').hidden = !s.lead;
-  if (s.lead) {
-    const rootPc = pcOf(6, s.lead.root);
-    fbLead.setMarks(leadNotes(s.lead.root).map(([st, f]) => ({ s: st, f, kind: pcOf(st, f) === rootPc ? 'root' : 'note' })));
-    $('#lead-readout').innerHTML = `Pentatônica de <b>${both(rootPc)}</b> menor · dedo 1 na casa ${s.lead.root}, sem capotraste`;
-    $('#lead-licks').innerHTML = s.lead.licks.map((l, i) => `<div class="block"><b>${l.name}</b><p class="muted">${l.text}</p><div class="panel"><div id="lick-${i}"></div></div></div>`).join('');
-    s.lead.licks.forEach((l, i) => new Tab($('#lick-' + i), { bpm: l.bpm, fb: fbLead, events: l.events }));
-  }
   $('#song-title').textContent = s.title;
   $('#song-artist').textContent = s.artist;
   $('#song-facts').innerHTML = `<span>Capotraste: <b>${elec ? 'não usa (tom original)' : baseCapo() ? 'casa ' + baseCapo() : 'não precisa'}</b></span><span>Nível: <b>${s.level}</b></span><span>Original: <b>${s.orig}</b></span><span>Levada: <b>${PATTERNS[songPattern()].name}</b></span>`;
