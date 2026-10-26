@@ -664,6 +664,20 @@ dl.gloss dd{margin:2px 0 0;max-width:65ch}
       <label class="check" for="song-nocapo"><input type="checkbox" id="song-nocapo"> Estou sem capotraste</label>
     </div>
   </div>
+  <div class="block" id="solo-box" hidden>
+    <div class="kicker">Solo</div>
+    <h3>O solo</h3>
+    <p id="solo-text"></p>
+    <div class="panel">
+      <div id="fb-solo"></div>
+      <div class="row">
+        <button type="button" class="btn" id="solo-full">▶ Solo completo com a base</button>
+        <label class="muted" for="solo-bpm">Velocidade <output id="solo-bpm-o">70</output> BPM</label>
+        <input type="range" id="solo-bpm" min="40" max="140" step="5" value="70">
+      </div>
+    </div>
+    <div id="solo-phrases" class="block"></div>
+  </div>
   <div class="block">
     <h3>Dicas para esta música</h3>
     <ul id="song-tips"></ul>
@@ -1371,7 +1385,11 @@ const CHORDS = {
   G7sus4: { f: [3, -1, 0, 0, 1, 1], fi: [3, 0, 0, 0, 1, 1], b: 6 },
   Am7: { f: [-1, 0, 2, 0, 1, 0], fi: [0, 0, 2, 0, 1, 0], b: 5 },
   Dm7: { f: [-1, -1, 0, 2, 1, 1], fi: [0, 0, 0, 2, 1, 1], b: 4 },
-  Fadd9: { f: [-1, -1, 3, 2, 1, 3], fi: [0, 0, 3, 2, 1, 4], b: 4 }
+  Fadd9: { f: [-1, -1, 3, 2, 1, 3], fi: [0, 0, 3, 2, 1, 4], b: 4 },
+  // power chords for the blues
+  A5: { f: [-1, 0, 2, 2, -1, -1], fi: [0, 0, 1, 2, 0, 0], b: 5 },
+  D5: { f: [-1, 5, 7, 7, -1, -1], fi: [0, 1, 3, 4, 0, 0], b: 5 },
+  E5: { f: [0, 2, 2, -1, -1, -1], fi: [0, 1, 2, 0, 0, 0], b: 6 }
 };
 // strum tokens: D down, d light down, U up
 const PATTERNS = {
@@ -1472,6 +1490,44 @@ fbSwap.setMarks(chordMarks(PAIRS[0][0]));
 /* ---------- músicas ---------- */
 // Chords only (no lyrics). Simplified versions checked against published chord sheets.
 const SONGS = [
+  { title: 'Blues em Lá', artist: 'Original do curso', capo: 0, level: 'Fácil', orig: 'blues de 12 compassos', bpm: 70, modes: false,
+    loop: ['A5', 'A5', 'A5', 'A5', 'D5', 'D5', 'A5', 'A5', 'E5', 'D5', 'A5', 'E5'], pattern: 'oitavas',
+    note: 'Uma música criada para o curso, no formato mais tocado da guitarra elétrica: o blues de 12 compassos. São só três power chords (A5, D5 e E5) e um solo inteiro com a escala pentatônica da Aula 4.',
+    tips: [
+      'O blues de 12 compassos tem sempre a mesma ordem: 4 compassos de A5, 2 de D5, 2 de A5, depois E5, D5, A5 e E5. Decorando isso, você consegue tocar com qualquer pessoa numa jam.',
+      'Todos os acordes são power chords (Aula 3). O A5 e o E5 usam cordas soltas, então são os mais fáceis.',
+      'Na base, use palm mute leve e a levada em colcheias. No solo, tire o palm mute e deixe as notas soarem.',
+      'Som: escolha "Distorcido" no topo. Captador da ponte para a base, do braço para o solo.'
+    ],
+    plan: [
+      '<b>Dias 1–3:</b> a base. Toque a sequência de 12 compassos no player até não precisar olhar.',
+      '<b>Dias 4–5:</b> o desenho da pentatônica de Lá (Aula 4), subindo e descendo com metrônomo.',
+      '<b>Semana 2:</b> o solo, uma frase por vez, devagar.',
+      '<b>Semana 3:</b> o solo completo com a base, subindo 5 BPM por dia até 90.',
+      '<b>Depois:</b> crie suas próprias frases mudando a ordem das notas do desenho. Isso é improvisar.'
+    ],
+    solo: { root: 5,
+      text: 'O solo usa só o desenho 1 da pentatônica de Lá menor (Aula 4), entre as casas 5 e 8, e as técnicas da Aula 5: hammer-on (h), bend (b) e vibrato (~). São três frases de 4 compassos, uma para cada parte do blues.',
+      phrases: [
+        { name: 'Frase 1 · compassos 1 a 4 (sobre A5)', text: 'Desce pelo desenho, faz um hammer-on e um bend, e termina no Lá com vibrato.', events: [
+          { n: [[1, 5]], d: 1 }, { n: [[2, 8]], d: 1 }, { n: [[2, 5]], d: 1 }, { n: [[3, 7]], d: 1 },
+          { n: [[3, 5]], d: 2, tech: { t: 'h', to: 7 } }, { n: [[4, 7]], d: 2, tech: { t: '~' } },
+          { n: [[3, 7]], d: 2, tech: { t: 'b', to: 9 } }, { n: [[2, 5]], d: 1 }, { n: [[3, 7]], d: 1 },
+          { n: [[4, 7]], d: 4, tech: { t: '~' } }
+        ] },
+        { name: 'Frase 2 · compassos 5 a 8 (D5 e A5)', text: 'Começa com um bend na 2ª corda e desce até o Lá da 4ª corda.', events: [
+          { n: [[2, 8]], d: 2, tech: { t: 'b', to: 10 } }, { n: [[1, 5]], d: 2 },
+          { n: [[2, 8]], d: 1 }, { n: [[2, 5]], d: 1 }, { n: [[3, 7]], d: 1 }, { n: [[3, 5]], d: 1 },
+          { n: [[4, 7]], d: 1 }, { n: [[4, 5]], d: 1 }, { n: [[5, 7]], d: 2 },
+          { n: [[4, 5]], d: 2, tech: { t: 'h', to: 7 } }, { n: [[4, 7]], d: 2, tech: { t: '~' } }
+        ] },
+        { name: 'Frase 3 · compassos 9 a 12 (E5, D5, A5, E5)', text: 'Um bend em cima do E5 e uma descida que termina no Mi, preparando a volta para o começo.', events: [
+          { n: [[3, 7]], d: 2, tech: { t: 'b', to: 9 } }, { n: [[2, 5]], d: 2, tech: { t: '~' } },
+          { n: [[2, 8]], d: 1 }, { n: [[2, 5]], d: 1 }, { n: [[3, 7]], d: 2 },
+          { n: [[3, 5]], d: 1 }, { n: [[4, 7]], d: 1 }, { n: [[4, 5]], d: 1 }, { n: [[5, 7]], d: 1 },
+          { n: [[5, 7]], d: 4, tech: { t: '~' } }
+        ] }
+      ] } },
   { title: 'Rein Me In', artist: 'Sam Fender e Olivia Dean', level: 'Médio', orig: '~125 BPM', capo: 4, bpm: 60, origBpm: 125,
     loop: ['G', 'Am', 'Dm', 'Fmaj7', 'Em', 'Am', 'Dm', 'Fmaj7'], pattern: 'quatro',
     note: 'Nas cifras publicadas, essa mesma sequência aparece na introdução, nos versos e no refrão. O F original foi trocado por Fmaj7, que não precisa de pestana.',
@@ -1524,6 +1580,19 @@ const SONGS = [
 ];
 let songSel = 0;
 const fbSong = new Fretboard($('#fb-song'), { frets: 7 });
+const fbSolo = new Fretboard($('#fb-solo'));
+const soloBpm = bpmSlider('solo-bpm');
+$('#solo-full').addEventListener('click', e => {
+  const s = song(), btn = e.currentTarget;
+  if (btn.classList.contains('is-playing')) { Seq.stop(); return; }
+  STOPPERS.forEach(f => f());
+  runSeq(btn, s.solo.phrases.flatMap(p => p.events), soloBpm(), flashOn(fbSolo));
+  // the chords under the solo, one bar per chord, quieter so the solo stands out
+  const beat = 60 / soloBpm(), t0 = Audio.ctx().currentTime + 0.12;
+  s.loop.forEach((k, bar) => { for (let b = 0; b < 4; b++) CHORDS[k].f.forEach((fr, i) => {
+    if (fr >= 0) Seq.voices.push(Audio.play(6 - i, fr, { when: t0 + (bar * 4 + b) * beat + (5 - i) * 0.01, dur: beat * 0.8, vel: 0.3, choke: false }));
+  }); });
+});
 const songBpm = bpmSlider('song-bpm');
 let verSel = 0;
 // a song with versions is read as the shared fields plus the chosen version
@@ -1566,7 +1635,7 @@ const stopSong = loopButton($('#song-play'), makeStrummer({
   onStep: j => lightStep($('#song-pat'), j)
 }), () => { lightBar(-1); lightStep($('#song-pat'), -1); });
 function drawSong() {
-  const s = song(), elec = songMode === 'electric', loop = songLoop(), uniq = [...new Set(loop)];
+  const s = song(), elec = songMode === 'electric' && s.modes !== false, loop = songLoop(), uniq = [...new Set(loop)];
   $('#song-nocapo').closest('label').hidden = elec || !baseCapo();
   $('#song-alt-row').hidden = !s.alt || elec;
   if (s.alt) chips($('#song-alt'), ['normal', 'alta'], altOn ? 1 : 0, i => { stopSong(); altOn = !!i; drawSong(); }, a => a === 'normal' ? 'Normal (sem capo)' : `Mais aguda (capo na casa ${s.alt.capo})`);
@@ -1576,6 +1645,16 @@ function drawSong() {
   if (base.versions) chips($('#song-ver'), base.versions, verSel, i => { stopSong(); verSel = i; secSel = 0; altOn = false; drawSong(); }, v => v.name);
   $('#song-sec-row').hidden = !s.sections;
   if (s.sections) chips($('#song-sec'), s.sections, secSel, i => { stopSong(); secSel = i; drawSong(); }, x => x.name);
+  $('#song-mode').closest('.row').hidden = s.modes === false;
+  $('#solo-box').hidden = !s.solo;
+  if (s.solo) {
+    const rp = pcOf(6, s.solo.root);
+    fbSolo.setMarks(PENT.flatMap(([st, offs]) => offs.map(o => [st, s.solo.root + o])).map(([st, f]) => ({ s: st, f, kind: pcOf(st, f) === rp ? 'root' : 'note' })));
+    $('#solo-text').textContent = s.solo.text;
+    $('#solo-bpm').value = s.bpm; $('#solo-bpm-o').textContent = s.bpm;
+    $('#solo-phrases').innerHTML = s.solo.phrases.map((ph, i) => `<div class="block"><b>${ph.name}</b><p class="muted">${ph.text}</p><div class="panel"><div id="phrase-${i}"></div></div></div>`).join('');
+    s.solo.phrases.forEach((ph, i) => new Tab($('#phrase-' + i), { bpm: s.bpm, fb: fbSolo, events: ph.events }));
+  }
   $('#song-title').textContent = s.title;
   $('#song-artist').textContent = s.artist;
   $('#song-facts').innerHTML = `<span>Capotraste: <b>${elec ? 'não usa (tom original)' : baseCapo() ? 'casa ' + baseCapo() : 'não precisa'}</b></span><span>Nível: <b>${s.level}</b></span><span>Original: <b>${s.orig}</b></span><span>Levada: <b>${PATTERNS[songPattern()].name}</b></span>`;
