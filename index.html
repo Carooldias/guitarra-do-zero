@@ -1639,6 +1639,25 @@ const SONGS = [
     ],
     learn: { text: 'O riff e o solo são ótimos para treinar notas soltas com palhetada alternada. Aprenda pela tablatura licenciada do Songsterr ou por um tutorial em vídeo.',
       links: [['Tutoriais do riff (busca no YouTube)', 'Come As You Are Nirvana riff guitar tutorial'], ['Tutoriais do solo (busca no YouTube)', 'Come As You Are Nirvana solo guitar tutorial']] } },
+  { title: 'One and the Same', artist: 'Demi Lovato e Selena Gomez', capo: 4, level: 'Fácil', orig: 'pop, tom de Mi (E)', bpm: 70,
+    sections: [
+      { name: 'Parte 1', loop: ['C', 'C', 'Am', 'C', 'Am', 'Fmaj7', 'Dm', 'C'] },
+      { name: 'Parte 2', loop: ['Am', 'C', 'Am', 'Fmaj7', 'Am', 'Fmaj7', 'Dm', 'Fmaj7', 'Dm', 'C'] }
+    ],
+    pattern: 'pop',
+    note: 'Conferida com a cifra do Cifra Club, que está em Mi (E) com os acordes E, C#m, A e F#m. Para ficar o mais fácil possível, use o capotraste na casa 4: assim você toca C, Am, Fmaj7 e Dm, desenhos sem pestana, e a música soa no tom original. A duração de cada acorde é aproximada: confira ouvindo a gravação.',
+    tips: [
+      'São só 4 desenhos. No C, no Am e no Fmaj7, o dedo 1 fica sempre na 2ª corda, casa 1: deixe ele parado e mova só os outros dedos.',
+      'O Dm e o Fmaj7 só usam as 4 cordas mais finas. Comece a batida na 4ª corda nesses acordes.',
+      'Comece com a levada "4 para baixo" (Aula 6). Quando as trocas estiverem automáticas, passe para a levada pop.',
+      'Sem capotraste? Toque assim mesmo: fica mais grave, mas os desenhos são os mesmos. Marque "Estou sem capotraste".'
+    ],
+    plan: [
+      '<b>Dias 1–2:</b> treino de troca <b>C ↔ Fmaj7</b> e <b>Am ↔ Fmaj7</b> (Aula 6).',
+      '<b>Dias 3–4:</b> a troca <b>Dm → C</b>, devagar, clicando nos acordes do player.',
+      '<b>Dias 5–7:</b> a <b>Parte 1</b> no player, a 60 BPM.',
+      '<b>Semana 2:</b> a <b>Parte 2</b> e depois junto com a gravação, com o capo na casa 4.'
+    ] },
 ];
 let songSel = 0;
 const fbSong = new Fretboard($('#fb-song'), { frets: 7 });
