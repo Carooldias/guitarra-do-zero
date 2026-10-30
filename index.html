@@ -1640,7 +1640,18 @@ const SONGS = [
     ],
     learn: { text: 'O riff e o solo são ótimos para treinar notas soltas com palhetada alternada. Aprenda pela tablatura licenciada do Songsterr ou por um tutorial em vídeo.',
       links: [['Tutoriais do riff (busca no YouTube)', 'Come As You Are Nirvana riff guitar tutorial'], ['Tutoriais do solo (busca no YouTube)', 'Come As You Are Nirvana solo guitar tutorial']] } },
-  { title: 'One and the Same', artist: 'Demi Lovato e Selena Gomez', capo: 4, level: 'Fácil', orig: 'pop, tom de Mi (E)', bpm: 70,
+  { title: 'One and the Same', artist: 'Demi Lovato e Selena Gomez', capo: 4, level: 'Fácil', orig: 'pop, tom de Mi (E)', bpm: 70, defaultMode: 'electric',
+    elecTips: [
+      'Em power chords, a música vira <b>E5 · C#5 · A5 · F#5</b>, no tom original e sem capotraste.',
+      'E5 e A5 usam cordas soltas (6ª e 5ª), então são os mais fáceis. C#5 fica na 5ª corda, casa 4, e F#5 na 6ª corda, casa 2.',
+      'É um pop animado: colcheias firmes, com palm mute leve na Parte 1 e som aberto na Parte 2.'
+    ],
+    planElec: [
+      '<b>Dias 1–2:</b> E5 ↔ C#5 no player, com 4 batidas por acorde.',
+      '<b>Dias 3–4:</b> A5 ↔ F#5.',
+      '<b>Dias 5–7:</b> a Parte 1 em colcheias, a 60 BPM.',
+      '<b>Semana 2:</b> a Parte 2 e depois junto com a gravação, sem capotraste.'
+    ],
     sections: [
       { name: 'Parte 1', loop: ['C', 'C', 'Am', 'C', 'Am', 'Fmaj7', 'Dm', 'C'] },
       { name: 'Parte 2', loop: ['Am', 'C', 'Am', 'Fmaj7', 'Am', 'Fmaj7', 'Dm', 'Fmaj7', 'Dm', 'C'] }
@@ -1709,6 +1720,37 @@ const SONGS = [
       '<b>Dias 3–4:</b> o Verso, com os novos A5 e G#5.',
       '<b>Dias 5–7:</b> o Refrão (A#5, F#5, C#5, G#5) e a Ponte.',
       '<b>Semana 2:</b> suba 5 BPM por dia e toque junto com a gravação.'
+    ] },
+  { title: 'This Is Me', artist: 'Camp Rock · Demi Lovato e Joe Jonas', capo: 0, level: 'Fácil', orig: 'balada pop rock, tom de Ré (D)', bpm: 70, defaultMode: 'electric',
+    sections: [
+      { name: 'Introdução', loop: ['Bm7', 'G', 'D', 'A'] },
+      { name: 'Verso', loop: ['Bm7', 'D', 'Bm7', 'D', 'Bm7', 'G'] },
+      { name: 'Pré-refrão', loop: ['G', 'D', 'A', 'Bm7'] },
+      { name: 'Refrão', loop: ['G', 'A', 'G', 'D', 'Bm7', 'D', 'Em', 'G'] }
+    ],
+    pattern: 'pop',
+    note: 'Conferida com a cifra do Cifra Club: tom de Ré (D), sem capotraste, com Bm, G, D, A e Em. Ela abre no modo Elétrica, em power chords. No modo Fácil, o Bm virou Bm7, que não tem pestana. A duração de cada acorde é aproximada.',
+    tips: [
+      'G, D, A e Em são acordes abertos que você já viu na Aula 6. O Bm7 é o "B menor fácil": dedos 1, 2 e 3 na casa 2, com as cordas 4 e 2 soltas.',
+      'No refrão, as trocas G → A → G → D são rápidas. Treine G ↔ A separado antes.',
+      'É uma balada que cresce: verso suave e refrão forte.'
+    ],
+    elecTips: [
+      'Em power chords, a música vira <b>B5 · G5 · D5 · A5</b>, e o refrão ganha o <b>E5</b>.',
+      'A5 e E5 usam cordas soltas. B5 fica na 5ª corda, casa 2; G5 na 6ª corda, casa 3; D5 na 5ª corda, casa 5.',
+      'Comece o verso suave, com palm mute, e solte tudo no refrão: é aí que a música vira rock.'
+    ],
+    plan: [
+      '<b>Dias 1–2:</b> a Introdução (Bm7, G, D, A) no player.',
+      '<b>Dias 3–4:</b> o Verso e o Pré-refrão.',
+      '<b>Dias 5–7:</b> o Refrão, primeiro só G ↔ A.',
+      '<b>Semana 2:</b> as quatro partes seguidas e depois junto com a gravação.'
+    ],
+    planElec: [
+      '<b>Dias 1–2:</b> a Introdução em power chords (B5, G5, D5, A5), com 4 batidas por acorde.',
+      '<b>Dias 3–4:</b> o Verso com palm mute e o Pré-refrão.',
+      '<b>Dias 5–7:</b> o Refrão, com o E5, em colcheias e som aberto.',
+      '<b>Semana 2:</b> as quatro partes seguidas e depois junto com a gravação.'
     ] },
 ];
 let songSel = 0;
